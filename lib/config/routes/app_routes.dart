@@ -21,4 +21,11 @@
   static const String chat = '/chat/:chatId';
   static const String videoCall = '/video-call/:callId';
   static const String notifications = '/notifications';
+  
+  // Missing routes to be added
+  static const String payment = '/patient/payment';
+  static const String visitRating = '/patient/visit-rating';
+  static const String patientFile = '/doctor/patient-file/:patientId';
+  static const String medicalRecords = '/patient/medical-records';
+  static const String registerDoctorStep2 = '/register/doctor-specialty';
 }

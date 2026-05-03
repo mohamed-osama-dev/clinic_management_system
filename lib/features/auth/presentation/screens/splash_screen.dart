@@ -8,6 +8,7 @@ import 'package:clinic_management_system/features/auth/presentation/cubit/auth_s
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -20,20 +21,35 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(const Duration(seconds: 2), () {
-      if (mounted) {
-        final authState = context.read<AuthCubit>().state;
-        if (authState is AuthAuthenticated) {
-          if (authState.user.role == UserRole.patient) {
-            context.go(AppRoutes.patientHome);
-          } else {
-            context.go(AppRoutes.doctorDashboard);
-          }
-        } else {
-          context.go(AppRoutes.login);
-        }
+    _navigate();
+  }
+
+  Future<void> _navigate() async {
+    // Read auth state before delay to avoid using context across async gap
+    final authState = context.read<AuthCubit>().state;
+    await Future.delayed(const Duration(seconds: 2));
+    if (!mounted) return;
+    
+    final prefs = await SharedPreferences.getInstance();
+    final hasSeenOnboarding = prefs.getBool('has_seen_onboarding') ?? false;
+    
+    if (!hasSeenOnboarding) {
+      if (!mounted) return;
+      context.go(AppRoutes.onboarding);
+      return;
+    }
+    
+    if (authState is AuthAuthenticated) {
+      if (!mounted) return;
+      if (authState.user.role == UserRole.patient) {
+        context.go(AppRoutes.patientHome);
+      } else {
+        context.go(AppRoutes.doctorDashboard);
       }
-    });
+    } else {
+      if (!mounted) return;
+      context.go(AppRoutes.login);
+    }
   }
 
   @override

@@ -19,24 +19,35 @@ GoRouter createRouter(AuthCubit authCubit) {
   return GoRouter(
     initialLocation: AppRoutes.splash,
     refreshListenable: GoRouterRefreshStream(authCubit.stream),
-    redirect: (context, state) {
-      final authState = authCubit.state;
-      final location = state.matchedLocation;
+  redirect: (context, state) {
+    final authState = authCubit.state;
+    final location = state.matchedLocation;
 
-      if (location == AppRoutes.splash) return null;
+    if (location == AppRoutes.splash) return null;
 
-      if (authState is! AuthAuthenticated) {
-        return AppRoutes.login;
-      }
+    final noAuthRequired = [
+      AppRoutes.splash,
+      AppRoutes.onboarding,
+      AppRoutes.roleSelection,
+      AppRoutes.login,
+      AppRoutes.register,
+      AppRoutes.registerDoctorStep2,
+      AppRoutes.otpVerification,
+    ];
+    if (noAuthRequired.contains(location)) return null;
 
-      if (authState.user.role == UserRole.patient) {
-        if (location.startsWith('/doctor')) return AppRoutes.patientHome;
-      } else if (authState.user.role == UserRole.doctor) {
-        if (location.startsWith('/patient')) return AppRoutes.doctorDashboard;
-      }
+    if (authState is! AuthAuthenticated) {
+      return AppRoutes.login;
+    }
 
-      return null;
-    },
+    if (authState.user.role == UserRole.patient) {
+      if (location.startsWith('/doctor')) return AppRoutes.patientHome;
+    } else if (authState.user.role == UserRole.doctor) {
+      if (location.startsWith('/patient')) return AppRoutes.doctorDashboard;
+    }
+
+    return null;
+  },
     routes: <RouteBase>[
       GoRoute(
         path: AppRoutes.splash,
@@ -102,19 +113,26 @@ GoRouter createRouter(AuthCubit authCubit) {
           transitionsBuilder: (_, animation, __, child) => FadeTransition(opacity: animation, child: child),
         ),
       ),
-      // Stub routes
-      GoRoute(path: AppRoutes.patientSearch, builder: (_, __) => const SizedBox()),
-      GoRoute(path: AppRoutes.doctorProfile, builder: (_, __) => const SizedBox()),
-      GoRoute(path: AppRoutes.booking, builder: (_, __) => const SizedBox()),
-      GoRoute(path: AppRoutes.bookingConfirm, builder: (_, __) => const SizedBox()),
-      GoRoute(path: AppRoutes.myAppointments, builder: (_, __) => const SizedBox()),
-      GoRoute(path: AppRoutes.patientProfile, builder: (_, __) => const SizedBox()),
-      GoRoute(path: AppRoutes.doctorSchedule, builder: (_, __) => const SizedBox()),
-      GoRoute(path: AppRoutes.doctorPatients, builder: (_, __) => const SizedBox()),
-      GoRoute(path: AppRoutes.prescription, builder: (_, __) => const SizedBox()),
-      GoRoute(path: AppRoutes.chat, builder: (_, __) => const SizedBox()),
-      GoRoute(path: AppRoutes.videoCall, builder: (_, __) => const SizedBox()),
-      GoRoute(path: AppRoutes.notifications, builder: (_, __) => const SizedBox()),
+     // Stub routes
+       GoRoute(path: AppRoutes.patientSearch, builder: (_, __) => const SizedBox()),
+       GoRoute(path: AppRoutes.doctorProfile, builder: (_, __) => const SizedBox()),
+       GoRoute(path: AppRoutes.booking, builder: (_, __) => const SizedBox()),
+       GoRoute(path: AppRoutes.bookingConfirm, builder: (_, __) => const SizedBox()),
+       GoRoute(path: AppRoutes.myAppointments, builder: (_, __) => const SizedBox()),
+       GoRoute(path: AppRoutes.patientProfile, builder: (_, __) => const SizedBox()),
+       GoRoute(path: AppRoutes.doctorSchedule, builder: (_, __) => const SizedBox()),
+       GoRoute(path: AppRoutes.doctorPatients, builder: (_, __) => const SizedBox()),
+       GoRoute(path: AppRoutes.prescription, builder: (_, __) => const SizedBox()),
+       GoRoute(path: AppRoutes.chat, builder: (_, __) => const SizedBox()),
+       GoRoute(path: AppRoutes.videoCall, builder: (_, __) => const SizedBox()),
+       GoRoute(path: AppRoutes.notifications, builder: (_, __) => const SizedBox()),
+       
+       // Missing routes to be implemented
+       GoRoute(path: AppRoutes.payment, builder: (_, __) => const SizedBox()),
+       GoRoute(path: AppRoutes.visitRating, builder: (_, __) => const SizedBox()),
+       GoRoute(path: AppRoutes.patientFile, builder: (_, __) => const SizedBox()),
+       GoRoute(path: AppRoutes.medicalRecords, builder: (_, __) => const SizedBox()),
+       GoRoute(path: AppRoutes.registerDoctorStep2, builder: (_, __) => const SizedBox()),
     ],
     errorBuilder: (context, state) => const Center(child: Text('الصفحة غير موجودة')),
   );

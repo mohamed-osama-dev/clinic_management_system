@@ -18,6 +18,17 @@ class AppButton extends StatelessWidget {
     super.key,
   });
 
+  const AppButton.fullWidth({
+    required this.label,
+    this.onTap,
+    this.variant = ButtonVariant.primary,
+    this.isLoading = false,
+    this.prefixIcon,
+    this.width,
+    this.height = AppDimensions.buttonHeight,
+    super.key,
+  }) : isFullWidth = true;
+
   final String label;
   final VoidCallback? onTap;
   final ButtonVariant variant;
