@@ -1,91 +1,70 @@
-import 'package:clinic_management_system/core/constants/app_constants.dart';
-import 'package:clinic_management_system/core/network/dio_client.dart';
-import 'package:clinic_management_system/core/network/firebase_gateways.dart';
-import 'package:clinic_management_system/core/network/network_info.dart';
-import 'package:clinic_management_system/core/theme/theme_cubit.dart';
-import 'package:clinic_management_system/features/auth/data/datasources/auth_firebase_data_source.dart';
-import 'package:clinic_management_system/features/auth/data/datasources/auth_remote_data_source.dart';
+﻿import 'package:clinic_management_system/features/auth/data/datasources/auth_remote_data_source.dart';
 import 'package:clinic_management_system/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:clinic_management_system/features/auth/domain/repositories/auth_repository.dart';
+import 'package:clinic_management_system/features/auth/domain/usecases/check_email_verified_usecase.dart';
+import 'package:clinic_management_system/features/auth/domain/usecases/complete_doctor_profile_usecase.dart';
 import 'package:clinic_management_system/features/auth/domain/usecases/get_current_user.dart';
+import 'package:clinic_management_system/features/auth/domain/usecases/register_usecase.dart';
+import 'package:clinic_management_system/features/auth/domain/usecases/send_email_verification_usecase.dart';
+import 'package:clinic_management_system/features/auth/domain/usecases/send_password_reset_usecase.dart';
 import 'package:clinic_management_system/features/auth/domain/usecases/sign_in.dart';
 import 'package:clinic_management_system/features/auth/domain/usecases/sign_out.dart';
 import 'package:clinic_management_system/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
-import 'package:logger/logger.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 final GetIt sl = GetIt.instance;
 
-Future<void> initDependencies() async {
-  final sharedPreferences = await SharedPreferences.getInstance();
-  sl.registerLazySingleton<SharedPreferences>(() => sharedPreferences);
+Future<void> setupInjection() async {
+  _registerAuth();
+}
 
-  sl.registerLazySingleton<Logger>(() => Logger());
-  sl.registerLazySingleton<Connectivity>(() => Connectivity());
-  sl.registerLazySingleton<FlutterSecureStorage>(
-    () => const FlutterSecureStorage(),
-  );
+void _registerAuth() {
   sl.registerLazySingleton<FirebaseAuth>(() => FirebaseAuth.instance);
   sl.registerLazySingleton<FirebaseFirestore>(() => FirebaseFirestore.instance);
   sl.registerLazySingleton<FirebaseStorage>(() => FirebaseStorage.instance);
-  sl.registerLazySingleton<FirebaseMessaging>(() => FirebaseMessaging.instance);
-  sl.registerLazySingleton<Dio>(
-    () => Dio(
-      BaseOptions(
-        baseUrl: AppConstants.apiBaseUrl,
-        connectTimeout: AppConstants.requestTimeout,
-        receiveTimeout: AppConstants.requestTimeout,
-      ),
-    ),
-  );
-
-  sl.registerLazySingleton<DioClient>(() => DioClient(sl<Dio>()));
-  sl.registerLazySingleton<NetworkInfo>(
-    () => NetworkInfoImpl(sl<Connectivity>()),
-  );
-  sl.registerLazySingleton<FirebaseAuthGateway>(
-    () => FirebaseAuthGatewayImpl(sl<FirebaseAuth>()),
-  );
-  sl.registerLazySingleton<FirestoreGateway>(
-    () => FirestoreGatewayImpl(sl<FirebaseFirestore>()),
-  );
-  sl.registerLazySingleton<StorageGateway>(
-    () => StorageGatewayImpl(sl<FirebaseStorage>()),
-  );
-  sl.registerLazySingleton<MessagingGateway>(
-    () => MessagingGatewayImpl(sl<FirebaseMessaging>()),
-  );
-  sl.registerLazySingleton<AuthFirebaseDataSource>(
-    () => AuthFirebaseDataSource(sl<FirebaseAuthGateway>()),
-  );
 
   sl.registerLazySingleton<AuthRemoteDataSource>(
-    () => InMemoryAuthRemoteDataSource(),
+    () => FirebaseAuthDataSource(
+      firebaseAuth: sl<FirebaseAuth>(),
+      firestore: sl<FirebaseFirestore>(),
+      storage: sl<FirebaseStorage>(),
+    ),
   );
+  
   sl.registerLazySingleton<AuthRepository>(
     () => AuthRepositoryImpl(remoteDataSource: sl<AuthRemoteDataSource>()),
   );
-
-  sl.registerLazySingleton<GetCurrentUser>(
-    () => GetCurrentUser(sl<AuthRepository>()),
+  
+  sl.registerLazySingleton<RegisterUseCase>(() => RegisterUseCase(sl<AuthRepository>()));
+  sl.registerLazySingleton<CompleteDoctorProfileUseCase>(
+    () => CompleteDoctorProfileUseCase(sl<AuthRepository>()),
+  );
+  sl.registerLazySingleton<SendEmailVerificationUseCase>(
+    () => SendEmailVerificationUseCase(sl<AuthRepository>()),
+  );
+  sl.registerLazySingleton<CheckEmailVerifiedUseCase>(
+    () => CheckEmailVerifiedUseCase(sl<AuthRepository>()),
+  );
+  sl.registerLazySingleton<SendPasswordResetUseCase>(
+    () => SendPasswordResetUseCase(sl<AuthRepository>()),
   );
   sl.registerLazySingleton<SignIn>(() => SignIn(sl<AuthRepository>()));
   sl.registerLazySingleton<SignOut>(() => SignOut(sl<AuthRepository>()));
-
+  sl.registerLazySingleton<GetCurrentUser>(() => GetCurrentUser(sl<AuthRepository>()));
+  
   sl.registerFactory<AuthCubit>(
     () => AuthCubit(
-      getCurrentUser: sl<GetCurrentUser>(),
+      register: sl<RegisterUseCase>(),
+      completeDoctorProfile: sl<CompleteDoctorProfileUseCase>(),
+      sendEmailVerification: sl<SendEmailVerificationUseCase>(),
+      checkEmailVerified: sl<CheckEmailVerifiedUseCase>(),
+      sendPasswordReset: sl<SendPasswordResetUseCase>(),
       signIn: sl<SignIn>(),
       signOut: sl<SignOut>(),
+      getCurrentUser: sl<GetCurrentUser>(),
     ),
   );
-  sl.registerFactory<ThemeCubit>(ThemeCubit.new);
 }

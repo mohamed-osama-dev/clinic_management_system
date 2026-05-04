@@ -1,7 +1,8 @@
-class AppDurations {
+﻿abstract class AppDurations {
   const AppDurations._();
 
-  static const Duration short = Duration(milliseconds: 180);
-  static const Duration medium = Duration(milliseconds: 320);
-  static const Duration long = Duration(milliseconds: 600);
+  static const Duration fast = Duration(milliseconds: 150);
+  static const Duration normal = Duration(milliseconds: 300);
+  static const Duration slow = Duration(milliseconds: 500);
+  static const Duration verySlow = Duration(milliseconds: 800);
 }

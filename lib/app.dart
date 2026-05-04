@@ -1,9 +1,7 @@
-import 'package:clinic_management_system/config/di/injection_container.dart';
+﻿import 'package:clinic_management_system/config/di/injection_container.dart';
 import 'package:clinic_management_system/config/routes/app_router.dart';
-import 'package:clinic_management_system/core/constants/app_constants.dart';
-import 'package:clinic_management_system/core/constants/app_locales.dart';
+import 'package:clinic_management_system/core/constants/app_strings.dart';
 import 'package:clinic_management_system/core/theme/app_theme.dart';
-import 'package:clinic_management_system/core/theme/theme_cubit.dart';
 import 'package:clinic_management_system/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -15,64 +13,30 @@ class ClinicEaseApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider<ThemeCubit>(create: (_) => sl<ThemeCubit>()),
-        BlocProvider<AuthCubit>(
-          create: (_) => sl<AuthCubit>()..checkAuthStatus(),
-        ),
-      ],
-      child: const _AppView(),
-    );
-  }
-}
-
-class _AppView extends StatefulWidget {
-  const _AppView();
-
-  @override
-  State<_AppView> createState() => _AppViewState();
-}
-
-class _AppViewState extends State<_AppView> {
-  late final GoRouter _router;
-
-  @override
-  void initState() {
-    super.initState();
-    _router = AppRouter.createRouter(context.read<AuthCubit>());
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<ThemeCubit, ThemeMode>(
-      builder: (context, themeMode) {
+    return BlocProvider(
+      create: (_) => sl<AuthCubit>()..checkAuthStatus(),
+      child: Builder(builder: (context) {
+        final GoRouter router = createRouter(context.read<AuthCubit>());
         return MaterialApp.router(
-          title: AppConstants.appName,
+          title: AppStrings.appName,
           debugShowCheckedModeBanner: false,
-          routerConfig: _router,
-          themeMode: themeMode,
-          theme: AppTheme.lightTheme,
-          darkTheme: AppTheme.darkTheme,
-          locale: const Locale(AppLocales.ar),
-          supportedLocales: AppLocales.supportedLocales,
+          theme: AppTheme.light,
+          routerConfig: router,
+          locale: const Locale('ar'),
+          supportedLocales: const [Locale('ar')],
           localizationsDelegates: const [
             GlobalMaterialLocalizations.delegate,
             GlobalWidgetsLocalizations.delegate,
             GlobalCupertinoLocalizations.delegate,
           ],
           builder: (context, child) {
-            final locale = Localizations.localeOf(context);
-            final textDirection = locale.languageCode == AppLocales.ar
-                ? TextDirection.rtl
-                : TextDirection.ltr;
             return Directionality(
-              textDirection: textDirection,
-              child: child ?? const SizedBox.shrink(),
+              textDirection: TextDirection.rtl,
+              child: child!,
             );
           },
         );
-      },
+      }),
     );
   }
 }

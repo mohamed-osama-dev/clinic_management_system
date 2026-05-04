@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "369205638883",
+    "project_id": "clinicease-c04d1",
+    "storage_bucket": "clinicease-c04d1.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:369205638883:android:5ba6ffbb0e924d404977d6",
+        "android_client_info": {
+          "package_name": "com.clinicease.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC8TqZ5XG0Kom28XpZaTKsqzligF3LiFT0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:369205638883:android:00d9fdcc837daa494977d6",
+        "android_client_info": {
+          "package_name": "com.example.clinic_management_system"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC8TqZ5XG0Kom28XpZaTKsqzligF3LiFT0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
