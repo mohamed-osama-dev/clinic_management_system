@@ -4,6 +4,9 @@ import 'package:clinic_management_system/config/routes/app_routes.dart';
 import 'package:clinic_management_system/features/auth/domain/entities/app_user.dart';
 import 'package:clinic_management_system/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:clinic_management_system/features/auth/presentation/cubit/auth_state.dart';
+import 'package:clinic_management_system/features/auth/presentation/screens/doctor_specialty_screen.dart';
+import 'package:clinic_management_system/features/auth/presentation/screens/email_verification_screen.dart';
+import 'package:clinic_management_system/features/auth/presentation/screens/forgot_password_screen.dart';
 import 'package:clinic_management_system/features/auth/presentation/screens/login_screen.dart';
 import 'package:clinic_management_system/features/auth/presentation/screens/onboarding_screen.dart';
 import 'package:clinic_management_system/features/auth/presentation/screens/otp_verification_screen.dart';
@@ -32,6 +35,8 @@ GoRouter createRouter(AuthCubit authCubit) {
       AppRoutes.login,
       AppRoutes.register,
       AppRoutes.registerDoctorStep2,
+      AppRoutes.emailVerification,
+      AppRoutes.forgotPassword,
       AppRoutes.otpVerification,
     ];
     if (noAuthRequired.contains(location)) return null;
@@ -90,6 +95,30 @@ GoRouter createRouter(AuthCubit authCubit) {
         ),
       ),
       GoRoute(
+        path: AppRoutes.registerDoctorStep2,
+        pageBuilder: (context, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: const DoctorSpecialtyScreen(),
+          transitionsBuilder: (_, animation, __, child) => FadeTransition(opacity: animation, child: child),
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.emailVerification,
+        pageBuilder: (context, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: const EmailVerificationScreen(),
+          transitionsBuilder: (_, animation, __, child) => FadeTransition(opacity: animation, child: child),
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.forgotPassword,
+        pageBuilder: (context, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: const ForgotPasswordScreen(),
+          transitionsBuilder: (_, animation, __, child) => FadeTransition(opacity: animation, child: child),
+        ),
+      ),
+      GoRoute(
         path: AppRoutes.otpVerification,
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
@@ -129,11 +158,10 @@ GoRouter createRouter(AuthCubit authCubit) {
        
        // Missing routes to be implemented
        GoRoute(path: AppRoutes.payment, builder: (_, __) => const SizedBox()),
-       GoRoute(path: AppRoutes.visitRating, builder: (_, __) => const SizedBox()),
-       GoRoute(path: AppRoutes.patientFile, builder: (_, __) => const SizedBox()),
-       GoRoute(path: AppRoutes.medicalRecords, builder: (_, __) => const SizedBox()),
-       GoRoute(path: AppRoutes.registerDoctorStep2, builder: (_, __) => const SizedBox()),
-    ],
+        GoRoute(path: AppRoutes.visitRating, builder: (_, __) => const SizedBox()),
+        GoRoute(path: AppRoutes.patientFile, builder: (_, __) => const SizedBox()),
+        GoRoute(path: AppRoutes.medicalRecords, builder: (_, __) => const SizedBox()),
+     ],
     errorBuilder: (context, state) => const Center(child: Text('الصفحة غير موجودة')),
   );
 }

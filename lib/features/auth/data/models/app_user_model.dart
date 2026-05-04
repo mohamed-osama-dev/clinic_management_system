@@ -1,4 +1,5 @@
 import 'package:clinic_management_system/features/auth/domain/entities/app_user.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AppUserModel extends AppUser {
   const AppUserModel({
@@ -6,6 +7,14 @@ class AppUserModel extends AppUser {
     required super.email,
     required super.name,
     required super.role,
+    super.isEmailVerified = false,
+    super.phone,
+    super.avatarUrl,
+    super.specialty,
+    super.licenseNumber,
+    super.yearsOfExperience,
+    super.isProfileComplete = false,
+    super.createdAt,
   });
 
   factory AppUserModel.fromMap(Map<String, dynamic> map) {
@@ -16,6 +25,34 @@ class AppUserModel extends AppUser {
       role: (map['role'] as String) == UserRole.doctor.name
           ? UserRole.doctor
           : UserRole.patient,
+      isEmailVerified: (map['isEmailVerified'] as bool?) ?? false,
+      phone: map['phone'] as String?,
+      avatarUrl: map['avatarUrl'] as String?,
+      specialty: map['specialty'] as String?,
+      licenseNumber: map['licenseNumber'] as String?,
+      yearsOfExperience: (map['yearsOfExperience'] as num?)?.toInt(),
+      isProfileComplete: (map['isProfileComplete'] as bool?) ?? false,
+      createdAt: map['createdAt'] as DateTime?,
+    );
+  }
+
+  factory AppUserModel.fromFirestore(DocumentSnapshot doc) {
+    final Map<String, dynamic> data =
+        (doc.data() as Map<String, dynamic>?) ?? <String, dynamic>{};
+
+    return AppUserModel(
+      id: doc.id,
+      email: data['email'] ?? '',
+      name: data['name'] ?? '',
+      role: data['role'] == 'doctor' ? UserRole.doctor : UserRole.patient,
+      isEmailVerified: data['isEmailVerified'] ?? false,
+      phone: data['phone'],
+      avatarUrl: data['avatarUrl'],
+      specialty: data['specialty'],
+      licenseNumber: data['licenseNumber'],
+      yearsOfExperience: (data['yearsOfExperience'] as num?)?.toInt(),
+      isProfileComplete: data['isProfileComplete'] ?? false,
+      createdAt: (data['createdAt'] as Timestamp?)?.toDate(),
     );
   }
 
@@ -25,6 +62,61 @@ class AppUserModel extends AppUser {
       'email': email,
       'name': name,
       'role': role.name,
+      'isEmailVerified': isEmailVerified,
+      'phone': phone,
+      'avatarUrl': avatarUrl,
+      'specialty': specialty,
+      'licenseNumber': licenseNumber,
+      'yearsOfExperience': yearsOfExperience,
+      'isProfileComplete': isProfileComplete,
+      'createdAt': createdAt,
     };
+  }
+
+  Map<String, dynamic> toFirestore() => {
+    'email': email,
+    'name': name,
+    'role': role.name,
+    'isEmailVerified': isEmailVerified,
+    'phone': phone,
+    'avatarUrl': avatarUrl,
+    'specialty': specialty,
+    'licenseNumber': licenseNumber,
+    'yearsOfExperience': yearsOfExperience,
+    'isProfileComplete': isProfileComplete,
+    'createdAt': createdAt != null
+        ? Timestamp.fromDate(createdAt!)
+        : FieldValue.serverTimestamp(),
+  };
+
+  @override
+  AppUserModel copyWith({
+    String? id,
+    String? email,
+    String? name,
+    UserRole? role,
+    bool? isEmailVerified,
+    String? phone,
+    String? avatarUrl,
+    String? specialty,
+    String? licenseNumber,
+    int? yearsOfExperience,
+    bool? isProfileComplete,
+    DateTime? createdAt,
+  }) {
+    return AppUserModel(
+      id: id ?? this.id,
+      email: email ?? this.email,
+      name: name ?? this.name,
+      role: role ?? this.role,
+      isEmailVerified: isEmailVerified ?? this.isEmailVerified,
+      phone: phone ?? this.phone,
+      avatarUrl: avatarUrl ?? this.avatarUrl,
+      specialty: specialty ?? this.specialty,
+      licenseNumber: licenseNumber ?? this.licenseNumber,
+      yearsOfExperience: yearsOfExperience ?? this.yearsOfExperience,
+      isProfileComplete: isProfileComplete ?? this.isProfileComplete,
+      createdAt: createdAt ?? this.createdAt,
+    );
   }
 }

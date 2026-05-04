@@ -6,6 +6,8 @@
   static const String roleSelection = '/role-selection';
   static const String login = '/login';
   static const String register = '/register';
+  static const String emailVerification = '/email-verification';
+  static const String forgotPassword = '/forgot-password';
   static const String otpVerification = '/otp-verification';
   static const String patientHome = '/patient/home';
   static const String patientSearch = '/patient/search';
