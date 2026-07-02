@@ -46,25 +46,28 @@ class DefaultFirebaseOptions {
     messagingSenderId: '369205638883',
     projectId: 'clinicease-c04d1',
     authDomain: 'clinicease-c04d1.firebaseapp.com',
+    databaseURL: 'https://clinicease-c04d1-default-rtdb.europe-west1.firebasedatabase.app',
     storageBucket: 'clinicease-c04d1.firebasestorage.app',
     measurementId: 'G-2T0QD99KF8',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyC8TqZ5XG0Kom28XpZaTKsqzligF3LiFT0',
-    appId: '1:369205638883:android:00d9fdcc837daa494977d6',
+    appId: '1:369205638883:android:5ba6ffbb0e924d404977d6',
     messagingSenderId: '369205638883',
     projectId: 'clinicease-c04d1',
+    databaseURL: 'https://clinicease-c04d1-default-rtdb.europe-west1.firebasedatabase.app',
     storageBucket: 'clinicease-c04d1.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyDvRqkDzIsJV027EprHNAMpv35ihUcL3j8',
-    appId: '1:369205638883:ios:ffde2ec74a401c204977d6',
+    appId: '1:369205638883:ios:0d31353df3e3b4664977d6',
     messagingSenderId: '369205638883',
     projectId: 'clinicease-c04d1',
+    databaseURL: 'https://clinicease-c04d1-default-rtdb.europe-west1.firebasedatabase.app',
     storageBucket: 'clinicease-c04d1.firebasestorage.app',
-    iosBundleId: 'com.example.clinicManagementSystem',
+    iosBundleId: 'com.clinicease.app',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
@@ -72,6 +75,7 @@ class DefaultFirebaseOptions {
     appId: '1:369205638883:ios:ffde2ec74a401c204977d6',
     messagingSenderId: '369205638883',
     projectId: 'clinicease-c04d1',
+    databaseURL: 'https://clinicease-c04d1-default-rtdb.europe-west1.firebasedatabase.app',
     storageBucket: 'clinicease-c04d1.firebasestorage.app',
     iosBundleId: 'com.example.clinicManagementSystem',
   );
@@ -82,6 +86,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '369205638883',
     projectId: 'clinicease-c04d1',
     authDomain: 'clinicease-c04d1.firebaseapp.com',
+    databaseURL: 'https://clinicease-c04d1-default-rtdb.europe-west1.firebasedatabase.app',
     storageBucket: 'clinicease-c04d1.firebasestorage.app',
     measurementId: 'G-1Q3WK6QVHM',
   );
