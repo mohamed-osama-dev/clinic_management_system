@@ -1,3 +1,5 @@
+// Path: lib/features/auth/presentation/screens/login_screen.dart
+
 import 'package:clinic_management_system/config/routes/app_routes.dart';
 import 'package:clinic_management_system/core/constants/app_colors.dart';
 import 'package:clinic_management_system/core/constants/app_dimensions.dart';
@@ -55,7 +57,8 @@ class _LoginScreenState extends State<LoginScreen> {
               return;
             }
             if (state.user.role == UserRole.patient) {
-              context.go(AppRoutes.patientHome);
+              // Redirect to MainShell instead of PatientHome
+              context.go(AppRoutes.mainShell);
             } else {
               context.go(AppRoutes.doctorDashboard);
             }

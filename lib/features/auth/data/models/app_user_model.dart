@@ -10,7 +10,7 @@ class AppUserModel extends AppUser {
     super.isEmailVerified = false,
     super.phone,
     super.avatarUrl,
-    super.specialty,
+    super.specialization, // تم التعديل هنا
     super.licenseNumber,
     super.yearsOfExperience,
     super.isProfileComplete = false,
@@ -28,7 +28,7 @@ class AppUserModel extends AppUser {
       isEmailVerified: (map['isEmailVerified'] as bool?) ?? false,
       phone: map['phone'] as String?,
       avatarUrl: map['avatarUrl'] as String?,
-      specialty: map['specialty'] as String?,
+      specialization: map['specialization'] as String?, // تم التعديل هنا
       licenseNumber: map['licenseNumber'] as String?,
       yearsOfExperience: (map['yearsOfExperience'] as num?)?.toInt(),
       isProfileComplete: (map['isProfileComplete'] as bool?) ?? false,
@@ -48,7 +48,7 @@ class AppUserModel extends AppUser {
       isEmailVerified: data['isEmailVerified'] ?? false,
       phone: data['phone'],
       avatarUrl: data['avatarUrl'],
-      specialty: data['specialty'],
+      specialization: data['specialization'], // تم التعديل هنا
       licenseNumber: data['licenseNumber'],
       yearsOfExperience: (data['yearsOfExperience'] as num?)?.toInt(),
       isProfileComplete: data['isProfileComplete'] ?? false,
@@ -65,7 +65,7 @@ class AppUserModel extends AppUser {
       'isEmailVerified': isEmailVerified,
       'phone': phone,
       'avatarUrl': avatarUrl,
-      'specialty': specialty,
+      'specialization': specialization, // تم التعديل هنا
       'licenseNumber': licenseNumber,
       'yearsOfExperience': yearsOfExperience,
       'isProfileComplete': isProfileComplete,
@@ -80,7 +80,7 @@ class AppUserModel extends AppUser {
     'isEmailVerified': isEmailVerified,
     'phone': phone,
     'avatarUrl': avatarUrl,
-    'specialty': specialty,
+    'specialization': specialization, // تم التعديل هنا
     'licenseNumber': licenseNumber,
     'yearsOfExperience': yearsOfExperience,
     'isProfileComplete': isProfileComplete,
@@ -98,7 +98,7 @@ class AppUserModel extends AppUser {
     bool? isEmailVerified,
     String? phone,
     String? avatarUrl,
-    String? specialty,
+    String? specialization, // تم التعديل هنا
     String? licenseNumber,
     int? yearsOfExperience,
     bool? isProfileComplete,
@@ -112,7 +112,7 @@ class AppUserModel extends AppUser {
       isEmailVerified: isEmailVerified ?? this.isEmailVerified,
       phone: phone ?? this.phone,
       avatarUrl: avatarUrl ?? this.avatarUrl,
-      specialty: specialty ?? this.specialty,
+      specialization: specialization ?? this.specialization, // تم التعديل هنا
       licenseNumber: licenseNumber ?? this.licenseNumber,
       yearsOfExperience: yearsOfExperience ?? this.yearsOfExperience,
       isProfileComplete: isProfileComplete ?? this.isProfileComplete,

@@ -4,7 +4,9 @@ import 'package:clinic_management_system/core/constants/app_colors.dart';
 import 'package:clinic_management_system/core/constants/app_text_styles.dart';
 import 'package:clinic_management_system/core/constants/app_dimensions.dart';
 import 'package:clinic_management_system/core/widgets/app_bottom_nav.dart';
-
+import 'package:clinic_management_system/features/auth/presentation/cubit/auth_cubit.dart';
+import 'package:clinic_management_system/features/auth/presentation/cubit/auth_state.dart';
+import '../../../../shared/data/models/appointment_model.dart';
 import '../cubits/dashboard_cubit.dart';
 import '../cubits/dashboard_state.dart';
 import '../widgets/stats_card.dart';
@@ -24,7 +26,14 @@ class _DoctorDashboardScreenState extends State<DoctorDashboardScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<DashboardCubit>().loadDashboard();
+    // ── التعديل هنا: قراءة الـ AuthState وإرسال البيانات ──
+    final authState = context.read<AuthCubit>().state;
+    if (authState is AuthAuthenticated) {
+      context.read<DashboardCubit>().loadDashboard(
+        authState.user.id,
+        authState.user.name,
+      );
+    }
   }
 
   @override
@@ -141,7 +150,7 @@ class _DashboardHeader extends StatelessWidget {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
+                  color: Colors.white.withValues(alpha: 0.2), // تم تحديث withOpacity
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(
@@ -172,7 +181,7 @@ class _DashboardHeader extends StatelessWidget {
                 width: AppDimensions.avatarM,
                 height: AppDimensions.avatarM,
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.3),
+                  color: Colors.white.withValues(alpha: 0.3), // تم تحديث withOpacity
                   shape: BoxShape.circle,
                   border: Border.all(color: Colors.white, width: 2),
                 ),
@@ -270,7 +279,7 @@ class _NewRequestsSection extends StatelessWidget {
           Text('طلبات جديدة', style: AppTextStyles.h4),
           const SizedBox(height: AppDimensions.paddingS),
           ...requests.map(
-            (req) => Padding(
+                (req) => Padding(
               padding: const EdgeInsets.only(bottom: AppDimensions.paddingS),
               child: AppointmentRequestCard(
                 appointment: req,

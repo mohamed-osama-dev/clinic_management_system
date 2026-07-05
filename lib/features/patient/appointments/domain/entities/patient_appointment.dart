@@ -1,16 +1,23 @@
-import 'package:equatable/equatable.dart';
+// Path: lib/features/patient/appointments/domain/entities/patient_appointment.dart
 
-class PatientAppointment extends Equatable {
+import 'package:clinic_management_system/features/patient/doctor_profile/domain/entities/doctor_entity.dart';
+
+class PatientAppointment {
+  final String id;
+  final DoctorEntity doctor;
+  final DateTime dateTime;
+  final bool isOnline;
+  final String status; // 'confirmed', 'pending', 'cancelled'
+  final String location;
+  final double price;
+
   const PatientAppointment({
     required this.id,
-    required this.doctorName,
-    required this.dateIso,
+    required this.doctor,
+    required this.dateTime,
+    required this.isOnline,
+    required this.status,
+    required this.location,
+    required this.price,
   });
-
-  final String id;
-  final String doctorName;
-  final String dateIso;
-
-  @override
-  List<Object?> get props => [id, doctorName, dateIso];
 }

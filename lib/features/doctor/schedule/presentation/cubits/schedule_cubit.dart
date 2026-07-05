@@ -1,78 +1,52 @@
-// Placeholder stub for doctor schedule cubit.
+import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
+// TODO: اعمل import لملف appointments_repository.dart و appointment_model.dart بالمسار بتاعك
+import '../../../../shared/data/repositories/appointments_repository.dart';
 import 'schedule_state.dart';
 
 class ScheduleCubit extends Cubit<ScheduleState> {
-  ScheduleCubit() : super(const ScheduleInitial());
+  // أخدنا نسخة من الـ Repo عشان نكلم فايربيز
+  final AppointmentsRepository _repository = AppointmentsRepository();
+  StreamSubscription? _subscription;
 
-  // ── Dummy Data (Developer 4 replaces with Firestore) ──────────────────────
+  ScheduleCubit() : super(ScheduleInitial());
 
-  static final _dummyAppointments = {
-    // Monday April 27
-    '2026-04-27': const [
-      ScheduleAppointment(
-        id: '1',
-        patientName: 'فاطمة الشمري',
-        time: '09:00',
-        type: 'متابعة ضغط الدم',
-        durationMinutes: 30,
-        status: ScheduleStatus.confirmed,
-      ),
-      ScheduleAppointment(
-        id: '2',
-        patientName: 'محمد العتيبي',
-        time: '10:30',
-        type: 'كشف أولي',
-        durationMinutes: 30,
-        status: ScheduleStatus.pending,
-      ),
-      ScheduleAppointment(
-        id: '3',
-        patientName: 'نورة القحطاني',
-        time: '11:30',
-        type: 'نتائج تحاليل',
-        durationMinutes: 30,
-        status: ScheduleStatus.confirmed,
-      ),
-      ScheduleAppointment(
-        id: '4',
-        patientName: 'خالد السبيعي',
-        time: '01:00',
-        type: 'استشارة',
-        durationMinutes: 30,
-        status: ScheduleStatus.confirmed,
-      ),
-      ScheduleAppointment(
-        id: '5',
-        patientName: 'ريم الدوسري',
-        time: '03:30',
-        type: 'متابعة',
-        durationMinutes: 30,
-        status: ScheduleStatus.confirmed,
-      ),
-    ],
-  };
-
-  // ── Methods ───────────────────────────────────────────────────────────────
-
-  Future<void> loadSchedule({DateTime? date}) async {
-    final target = date ?? DateTime.now();
+  // ضفنا المتغير هنا
+  void loadSchedule(String doctorId) {
     emit(const ScheduleLoading());
-    await Future.delayed(const Duration(milliseconds: 600));
-
-    final key =
-        '${target.year}-${target.month.toString().padLeft(2, '0')}-${target.day.toString().padLeft(2, '0')}';
-
-    final appointments = _dummyAppointments[key] ?? [];
-
-    emit(ScheduleLoaded(selectedDate: target, appointments: appointments));
+    try {
+      _subscription?.cancel();
+      // باصينا المتغير الحقيقي للـ Repository
+      _subscription = _repository.getDoctorAppointments(doctorId).listen(
+              (appointments) {
+            emit(ScheduleLoaded(
+              appointments: appointments,
+              selectedDate: DateTime.now(),
+            ));
+          },
+          onError: (error) {
+            emit(ScheduleError('حصلت مشكلة في جلب المواعيد: $error'));
+          }
+      );
+    } catch (e) {
+      emit(ScheduleError('خطأ غير متوقع: $e'));
+    }
   }
 
+  // دالة عشان لما الدكتور يختار يوم تاني من الكاليندر
   void selectDate(DateTime date) {
-    final current = state;
-    if (current is ScheduleLoaded) {
-      emit(current.copyWith(selectedDate: date));
-      loadSchedule(date: date);
+    if (state is ScheduleLoaded) {
+      final currentState = state as ScheduleLoaded;
+      emit(ScheduleLoaded(
+        appointments: currentState.appointments,
+        selectedDate: date,
+      ));
     }
+  }
+
+  @override
+  Future<void> close() {
+    _subscription?.cancel(); // لازم نقفل الـ Stream عشان الـ Memory leak
+    return super.close();
   }
 }

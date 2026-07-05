@@ -1,9 +1,10 @@
+// Path: lib/features/doctor/patients/presentation/pages/doctor_patients_screen2.dart
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:clinic_management_system/core/constants/app_colors.dart';
 import 'package:clinic_management_system/core/constants/app_text_styles.dart';
 import 'package:clinic_management_system/core/constants/app_dimensions.dart';
-import 'package:clinic_management_system/core/widgets/app_bottom_nav.dart';
 
 import '../cubits/doctor_patients_cubit.dart';
 import '../cubits/doctor_patients_state.dart';
@@ -17,7 +18,7 @@ class DoctorPatientsScreen extends StatefulWidget {
 }
 
 class _DoctorPatientsScreenState extends State<DoctorPatientsScreen> {
-  int _currentNavIndex = 2;
+  // تم حذف _currentNavIndex من هنا
   final _searchController = TextEditingController();
 
   @override
@@ -36,10 +37,7 @@ class _DoctorPatientsScreenState extends State<DoctorPatientsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      bottomNavigationBar: DoctorBottomNav(
-        currentIndex: _currentNavIndex,
-        onTap: (i) => setState(() => _currentNavIndex = i),
-      ),
+      // تم حذف الـ bottomNavigationBar من هنا
       body: BlocBuilder<DoctorPatientsCubit, PatientsState>(
         builder: (context, state) {
           if (state is PatientsLoading || state is PatientsInitial) {
@@ -127,19 +125,19 @@ class _PatientsBody extends StatelessWidget {
               ),
               border: OutlineInputBorder(
                 borderRadius:
-                    BorderRadius.circular(AppDimensions.radiusFull),
+                BorderRadius.circular(AppDimensions.radiusFull),
                 borderSide: const BorderSide(color: AppColors.border),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius:
-                    BorderRadius.circular(AppDimensions.radiusFull),
+                BorderRadius.circular(AppDimensions.radiusFull),
                 borderSide: const BorderSide(color: AppColors.border),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius:
-                    BorderRadius.circular(AppDimensions.radiusFull),
+                BorderRadius.circular(AppDimensions.radiusFull),
                 borderSide:
-                    const BorderSide(color: AppColors.primary, width: 1.5),
+                const BorderSide(color: AppColors.primary, width: 1.5),
               ),
             ),
           ),
@@ -167,35 +165,35 @@ class _PatientsBody extends StatelessWidget {
         Expanded(
           child: state.filteredPatients.isEmpty
               ? Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(
-                        Icons.person_search_rounded,
-                        size: 64,
-                        color: AppColors.textHint,
-                      ),
-                      const SizedBox(height: AppDimensions.paddingM),
-                      Text(
-                        'لا توجد نتائج',
-                        style: AppTextStyles.bodyMedium,
-                      ),
-                    ],
-                  ),
-                )
-              : ListView.builder(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppDimensions.paddingM,
-                    vertical: AppDimensions.paddingS,
-                  ),
-                  itemCount: state.filteredPatients.length,
-                  itemBuilder: (context, i) => PatientCard(
-                    patient: state.filteredPatients[i],
-                    onTap: () {
-                      // TODO: navigate to patient file
-                    },
-                  ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(
+                  Icons.person_search_rounded,
+                  size: 64,
+                  color: AppColors.textHint,
                 ),
+                const SizedBox(height: AppDimensions.paddingM),
+                Text(
+                  'لا توجد نتائج',
+                  style: AppTextStyles.bodyMedium,
+                ),
+              ],
+            ),
+          )
+              : ListView.builder(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppDimensions.paddingM,
+              vertical: AppDimensions.paddingS,
+            ),
+            itemCount: state.filteredPatients.length,
+            itemBuilder: (context, i) => PatientCard(
+              patient: state.filteredPatients[i],
+              onTap: () {
+                // TODO: navigate to patient file
+              },
+            ),
+          ),
         ),
       ],
     );

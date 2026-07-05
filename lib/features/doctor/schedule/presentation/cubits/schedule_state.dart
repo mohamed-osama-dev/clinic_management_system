@@ -1,41 +1,14 @@
-// Placeholder stub for doctor schedule state.
+// Path: lib/features/doctor/schedule/presentation/cubits/schedule_state.dart
+
 import 'package:equatable/equatable.dart';
-
-// ── Model ─────────────────────────────────────────────────────────────────────
-
-class ScheduleAppointment extends Equatable {
-  const ScheduleAppointment({
-    required this.id,
-    required this.patientName,
-    required this.time,
-    required this.type,
-    required this.durationMinutes,
-    required this.status,
-    this.patientImageUrl,
-  });
-
-  final String id;
-  final String patientName;
-  final String time;
-  final String type;
-  final int durationMinutes;
-  final ScheduleStatus status;
-  final String? patientImageUrl;
-
-  @override
-  List<Object?> get props =>
-      [id, patientName, time, type, durationMinutes, status];
-}
-
-enum ScheduleStatus { confirmed, pending, cancelled }
-
-// ── States ────────────────────────────────────────────────────────────────────
+// TODO: اعمل import لمسار الـ AppointmentModel الصح بتاعك
+import '../../../../shared/data/models/appointment_model.dart';
 
 abstract class ScheduleState extends Equatable {
   const ScheduleState();
 
   @override
-  List<Object?> get props => [];
+  List<Object> get props => [];
 }
 
 class ScheduleInitial extends ScheduleState {
@@ -47,32 +20,32 @@ class ScheduleLoading extends ScheduleState {
 }
 
 class ScheduleLoaded extends ScheduleState {
+  final List<AppointmentModel> appointments;
+  final DateTime selectedDate;
+
   const ScheduleLoaded({
-    required this.selectedDate,
     required this.appointments,
+    required this.selectedDate,
   });
 
-  final DateTime selectedDate;
-  final List<ScheduleAppointment> appointments;
-
-  ScheduleLoaded copyWith({
-    DateTime? selectedDate,
-    List<ScheduleAppointment>? appointments,
-  }) =>
-      ScheduleLoaded(
-        selectedDate: selectedDate ?? this.selectedDate,
-        appointments: appointments ?? this.appointments,
-      );
+  // بنفلتر المواعيد عشان نعرض مواعيد اليوم المتحدد بس في الشاشة
+  List<AppointmentModel> get todayAppointments {
+    return appointments.where((app) =>
+    app.dateTime.year == selectedDate.year &&
+        app.dateTime.month == selectedDate.month &&
+        app.dateTime.day == selectedDate.day
+    ).toList();
+  }
 
   @override
-  List<Object?> get props => [selectedDate, appointments];
+  List<Object> get props => [appointments, selectedDate];
 }
 
 class ScheduleError extends ScheduleState {
-  const ScheduleError({required this.message});
-
   final String message;
 
+  const ScheduleError(this.message);
+
   @override
-  List<Object?> get props => [message];
+  List<Object> get props => [message];
 }

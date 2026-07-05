@@ -9,6 +9,9 @@
   static const String emailVerification = '/email-verification';
   static const String forgotPassword = '/forgot-password';
   static const String otpVerification = '/otp-verification';
+
+  static const String mainShell = '/patient/main-shell';
+
   static const String patientHome = '/patient/home';
   static const String patientSearch = '/patient/search';
   static const String doctorProfile = '/patient/doctor/:id';
@@ -23,7 +26,7 @@
   static const String chat = '/chat/:chatId';
   static const String videoCall = '/video-call/:callId';
   static const String notifications = '/notifications';
-  
+
   // Missing routes to be added
   static const String payment = '/patient/payment';
   static const String visitRating = '/patient/visit-rating';

@@ -1,94 +1,84 @@
-// Placeholder stub for doctor dashboard cubit.
+import 'dart:async';
+import 'package:flutter/foundation.dart'; // عشان نستخدم debugPrint
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+// ── التعديل الأول: استخدام المسارات الكاملة بدل النسبية ──
+import 'package:clinic_management_system/features/shared/data/models/appointment_model.dart';
+// اتأكد إن مسار الريبوزيتوري ده مطابق للمكان اللي حطيته فيه
+
+import '../../../../shared/data/repositories/appointments_repository.dart';
 import 'dashboard_state.dart';
 
 class DashboardCubit extends Cubit<DashboardState> {
+  final AppointmentsRepository _repository = AppointmentsRepository();
+  StreamSubscription? _subscription;
+
   DashboardCubit() : super(const DashboardInitial());
 
-  // ── Dummy Data (Developer 4 will replace with Firestore) ──────────────────
-
-  static const _dummyStats = DashboardStats(
-    revenue: 3200,
-    appointments: 18,
-    todayPatients: 12,
-  );
-
-  static const _dummySchedule = [
-    AppointmentModel(
-      id: '1',
-      patientName: 'فاطمة الشمري',
-      time: '09:00 ص',
-      type: 'متابعة ضغط الدم',
-      status: AppointmentStatus.confirmed,
-    ),
-    AppointmentModel(
-      id: '2',
-      patientName: 'محمد العتيبي',
-      time: '10:30 ص',
-      type: 'كشف أولي',
-      status: AppointmentStatus.pending,
-    ),
-    AppointmentModel(
-      id: '3',
-      patientName: 'نورة القحطاني',
-      time: '11:30 ص',
-      type: 'نتائج تحاليل',
-      status: AppointmentStatus.confirmed,
-    ),
-  ];
-
-  static const _dummyRequests = [
-    AppointmentModel(
-      id: '4',
-      patientName: 'سارة المطيري',
-      time: '02:30 م',
-      type: 'استشارة',
-      status: AppointmentStatus.pending,
-    ),
-  ];
-
-  // ── Methods ───────────────────────────────────────────────────────────────
-
-  Future<void> loadDashboard() async {
+  void loadDashboard(String doctorId, String doctorName) {
     emit(const DashboardLoading());
-    await Future.delayed(const Duration(milliseconds: 800));
-    emit(const DashboardLoaded(
-      doctorName: 'د. أحمد العلي',
-      stats: _dummyStats,
-      todaySchedule: _dummySchedule,
-      newRequests: _dummyRequests,
-    ));
+
+    try {
+      _subscription?.cancel();
+
+      _subscription = _repository.getDoctorAppointments(doctorId).listen(
+              (appointments) {
+            final now = DateTime.now();
+
+            final todayAppointments = appointments.where((app) =>
+            app.dateTime.year == now.year &&
+                app.dateTime.month == now.month &&
+                app.dateTime.day == now.day &&
+                (app.status == AppointmentStatus.confirmed || app.status == AppointmentStatus.completed)
+            ).toList();
+
+            final newRequests = appointments.where((app) =>
+            app.status == AppointmentStatus.pending
+            ).toList();
+
+            final todayCount = todayAppointments.length;
+            final uniquePatients = todayAppointments.map((e) => e.patientId).toSet().length;
+            final revenue = todayCount * 200.0;
+
+            emit(DashboardLoaded(
+              doctorName: 'د. $doctorName',
+              stats: DashboardStats(
+                revenue: revenue,
+                appointments: todayCount,
+                todayPatients: uniquePatients,
+              ),
+              todaySchedule: todayAppointments,
+              newRequests: newRequests,
+            ));
+          },
+          onError: (error) {
+            debugPrint('Error loading dashboard: $error');
+          }
+      );
+    } catch (e) {
+      debugPrint('Unexpected error: $e');
+    }
   }
 
-  void acceptRequest(String appointmentId) {
-    final current = state;
-    if (current is! DashboardLoaded) return;
-
-    final updatedRequests = current.newRequests
-        .where((a) => a.id != appointmentId)
-        .toList();
-
-    emit(DashboardLoaded(
-      doctorName: current.doctorName,
-      stats: current.stats,
-      todaySchedule: current.todaySchedule,
-      newRequests: updatedRequests,
-    ));
+  Future<void> acceptRequest(String appointmentId) async {
+    try {
+      await _repository.updateAppointmentStatus(appointmentId, AppointmentStatus.confirmed);
+    } catch (e) {
+      debugPrint('Error accepting request: $e');
+    }
   }
 
-  void rejectRequest(String appointmentId) {
-    final current = state;
-    if (current is! DashboardLoaded) return;
+  Future<void> rejectRequest(String appointmentId) async {
+    try {
+      await _repository.updateAppointmentStatus(appointmentId, AppointmentStatus.cancelled);
+    } catch (e) {
+      debugPrint('Error rejecting request: $e');
+    }
+  }
 
-    final updatedRequests = current.newRequests
-        .where((a) => a.id != appointmentId)
-        .toList();
-
-    emit(DashboardLoaded(
-      doctorName: current.doctorName,
-      stats: current.stats,
-      todaySchedule: current.todaySchedule,
-      newRequests: updatedRequests,
-    ));
+  @override
+  Future<void> close() {
+    _subscription?.cancel();
+    return super.close();
   }
 }

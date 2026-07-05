@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:clinic_management_system/core/constants/app_colors.dart';
 import 'package:clinic_management_system/core/constants/app_text_styles.dart';
 import 'package:clinic_management_system/core/constants/app_dimensions.dart';
-import 'package:clinic_management_system/features/doctor/schedule/presentation/cubits/schedule_state.dart';
+
+import '../../../../shared/data/models/appointment_model.dart';
 
 class ScheduleAppointmentCard extends StatelessWidget {
   const ScheduleAppointmentCard({
@@ -10,11 +11,19 @@ class ScheduleAppointmentCard extends StatelessWidget {
     super.key,
   });
 
-  final ScheduleAppointment appointment;
+  // التعديل 2: استخدام AppointmentModel
+  final AppointmentModel appointment;
 
   @override
   Widget build(BuildContext context) {
     final (statusLabel, statusColor) = _statusInfo(appointment.status);
+
+    // استخراج الوقت من الـ DateTime وتنسيقه (ص / م)
+    String period = appointment.dateTime.hour >= 12 ? 'م' : 'ص';
+    int hour12 = appointment.dateTime.hour > 12
+        ? appointment.dateTime.hour - 12
+        : (appointment.dateTime.hour == 0 ? 12 : appointment.dateTime.hour);
+    String timeString = '$hour12:${appointment.dateTime.minute.toString().padLeft(2, '0')} $period';
 
     return Container(
       margin: const EdgeInsets.only(bottom: AppDimensions.paddingM),
@@ -49,7 +58,8 @@ class ScheduleAppointmentCard extends StatelessWidget {
                       radius: AppDimensions.avatarS / 2,
                       backgroundColor: AppColors.primaryLight,
                       child: Text(
-                        appointment.patientName.substring(0, 1),
+                        // بياخد أول حرف من اسم المريض
+                        appointment.patientName.isNotEmpty ? appointment.patientName.substring(0, 1) : 'م',
                         style: AppTextStyles.labelMedium
                             .copyWith(color: AppColors.primary),
                       ),
@@ -62,7 +72,7 @@ class ScheduleAppointmentCard extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Text(
-                            appointment.patientName,
+                            appointment.patientName, // الاسم الحقيقي
                             style: AppTextStyles.labelLarge,
                             textDirection: TextDirection.rtl,
                           ),
@@ -71,7 +81,7 @@ class ScheduleAppointmentCard extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
                               Text(
-                                appointment.type,
+                                appointment.type, // نوع الكشف الحقيقي
                                 style: AppTextStyles.bodySmall,
                                 textDirection: TextDirection.rtl,
                               ),
@@ -88,7 +98,7 @@ class ScheduleAppointmentCard extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
                               Text(
-                                '${appointment.durationMinutes} د',
+                                '${appointment.durationMinutes} د', // المدة الحقيقية
                                 style: AppTextStyles.captionText,
                               ),
                               const SizedBox(width: 4),
@@ -113,7 +123,8 @@ class ScheduleAppointmentCard extends StatelessWidget {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 8, vertical: 4),
                           decoration: BoxDecoration(
-                            color: statusColor.withOpacity(0.1),
+                            // التعديل 3: حل تحذير الـ Opacity هنا
+                            color: statusColor.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(
                                 AppDimensions.radiusFull),
                           ),
@@ -138,7 +149,7 @@ class ScheduleAppointmentCard extends StatelessWidget {
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          appointment.time,
+                          timeString,
                           style: AppTextStyles.h4
                               .copyWith(color: AppColors.primary),
                         ),
@@ -154,9 +165,11 @@ class ScheduleAppointmentCard extends StatelessWidget {
     );
   }
 
-  (String, Color) _statusInfo(ScheduleStatus status) => switch (status) {
-        ScheduleStatus.confirmed => ('مؤكد', AppColors.success),
-        ScheduleStatus.pending => ('قيد الانتظار', AppColors.warning),
-        ScheduleStatus.cancelled => ('ملغى', AppColors.error),
-      };
+  // التعديل 4: استخدام AppointmentStatus الحقيقي
+  (String, Color) _statusInfo(AppointmentStatus status) => switch (status) {
+    AppointmentStatus.confirmed => ('مؤكد', AppColors.success),
+    AppointmentStatus.pending => ('قيد الانتظار', AppColors.warning),
+    AppointmentStatus.cancelled => ('ملغى', AppColors.error),
+    AppointmentStatus.completed => ('مكتمل', Colors.blue),
+  };
 }

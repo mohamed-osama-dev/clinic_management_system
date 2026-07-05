@@ -1,7 +1,9 @@
-// Placeholder stub for doctor dashboard state.
 import 'package:equatable/equatable.dart';
 
-// ── Dummy Models ──────────────────────────────────────────────────────────────
+// ── استدعاء الموديل الحقيقي بدل الوهمي ──
+import 'package:clinic_management_system/features/shared/data/models/appointment_model.dart';
+
+// ── Models ──────────────────────────────────────────────────────────────
 
 class DashboardStats extends Equatable {
   const DashboardStats({
@@ -18,28 +20,7 @@ class DashboardStats extends Equatable {
   List<Object?> get props => [revenue, appointments, todayPatients];
 }
 
-class AppointmentModel extends Equatable {
-  const AppointmentModel({
-    required this.id,
-    required this.patientName,
-    required this.time,
-    required this.type,
-    required this.status,
-    this.patientImageUrl,
-  });
-
-  final String id;
-  final String patientName;
-  final String time;
-  final String type;
-  final AppointmentStatus status;
-  final String? patientImageUrl;
-
-  @override
-  List<Object?> get props => [id, patientName, time, type, status];
-}
-
-enum AppointmentStatus { confirmed, pending, cancelled }
+// تم حذف AppointmentModel و AppointmentStatus الوهميين من هنا
 
 // ── States ────────────────────────────────────────────────────────────────────
 

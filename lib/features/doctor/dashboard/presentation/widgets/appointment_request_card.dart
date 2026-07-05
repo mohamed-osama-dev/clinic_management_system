@@ -1,9 +1,9 @@
-// Placeholder stub for appointment request card widget.
 import 'package:flutter/material.dart';
 import 'package:clinic_management_system/core/constants/app_colors.dart';
 import 'package:clinic_management_system/core/constants/app_text_styles.dart';
 import 'package:clinic_management_system/core/constants/app_dimensions.dart';
-import '../../../dashboard/presentation/cubits/dashboard_state.dart';
+import '../../../../shared/data/models/appointment_model.dart';
+// تم حذف الاستدعاء غير المستخدم من هنا
 
 class AppointmentRequestCard extends StatelessWidget {
   const AppointmentRequestCard({
@@ -19,6 +19,13 @@ class AppointmentRequestCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // تحويل dateTime إلى نص مقروء للساعة
+    final hour = appointment.dateTime.hour;
+    final minute = appointment.dateTime.minute.toString().padLeft(2, '0');
+    final period = hour >= 12 ? 'م' : 'ص';
+    final displayHour = hour > 12 ? hour - 12 : (hour == 0 ? 12 : hour);
+    final timeString = '$displayHour:$minute $period';
+
     return Container(
       padding: const EdgeInsets.all(AppDimensions.paddingM),
       decoration: BoxDecoration(
@@ -35,7 +42,7 @@ class AppointmentRequestCard extends StatelessWidget {
                 radius: AppDimensions.avatarS / 2,
                 backgroundColor: AppColors.primaryLight,
                 child: Text(
-                  appointment.patientName.substring(0, 1),
+                  appointment.patientName.isNotEmpty ? appointment.patientName.substring(0, 1) : 'م',
                   style: AppTextStyles.labelMedium
                       .copyWith(color: AppColors.primary),
                 ),
@@ -52,7 +59,7 @@ class AppointmentRequestCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      '${appointment.type} • ${appointment.time}',
+                      '${appointment.type} • $timeString',
                       style: AppTextStyles.bodySmall,
                       textDirection: TextDirection.rtl,
                     ),
@@ -78,10 +85,10 @@ class AppointmentRequestCard extends StatelessWidget {
                     side: const BorderSide(color: AppColors.error),
                     shape: RoundedRectangleBorder(
                       borderRadius:
-                          BorderRadius.circular(AppDimensions.radiusM),
+                      BorderRadius.circular(AppDimensions.radiusM),
                     ),
                     padding:
-                        const EdgeInsets.symmetric(vertical: AppDimensions.paddingS),
+                    const EdgeInsets.symmetric(vertical: AppDimensions.paddingS),
                   ),
                 ),
               ),
@@ -98,10 +105,10 @@ class AppointmentRequestCard extends StatelessWidget {
                     elevation: 0,
                     shape: RoundedRectangleBorder(
                       borderRadius:
-                          BorderRadius.circular(AppDimensions.radiusM),
+                      BorderRadius.circular(AppDimensions.radiusM),
                     ),
                     padding:
-                        const EdgeInsets.symmetric(vertical: AppDimensions.paddingS),
+                    const EdgeInsets.symmetric(vertical: AppDimensions.paddingS),
                   ),
                 ),
               ),

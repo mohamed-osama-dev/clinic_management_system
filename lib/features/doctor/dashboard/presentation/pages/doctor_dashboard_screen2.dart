@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:clinic_management_system/config/routes/app_routes.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:clinic_management_system/core/constants/app_colors.dart';
 import 'package:clinic_management_system/core/constants/app_text_styles.dart';
 import 'package:clinic_management_system/core/constants/app_dimensions.dart';
-import 'package:clinic_management_system/core/widgets/app_bottom_nav.dart';
-
+import 'package:clinic_management_system/features/auth/presentation/cubit/auth_cubit.dart';
+import 'package:clinic_management_system/features/auth/presentation/cubit/auth_state.dart';
+import '../../../../shared/data/models/appointment_model.dart';
 import '../cubits/dashboard_cubit.dart';
 import '../cubits/dashboard_state.dart';
 import '../widgets/stats_card.dart';
@@ -21,30 +20,23 @@ class DoctorDashboardScreen extends StatefulWidget {
 }
 
 class _DoctorDashboardScreenState extends State<DoctorDashboardScreen> {
-  int _currentNavIndex = 0;
-
   @override
   void initState() {
     super.initState();
-    context.read<DashboardCubit>().loadDashboard();
+    // حل مشكلة الـ arguments بإرسال بيانات الدكتور الحقيقي
+    final authState = context.read<AuthCubit>().state;
+    if (authState is AuthAuthenticated) {
+      context.read<DashboardCubit>().loadDashboard(
+        authState.user.id,
+        authState.user.name,
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      bottomNavigationBar: DoctorBottomNav(
-        currentIndex: _currentNavIndex,
-        onTap: (i) {
-        switch (i) {
-          case 0: context.go(AppRoutes.doctorDashboard); break;
-          case 1: context.go(AppRoutes.doctorSchedule); break;
-          case 2: context.go(AppRoutes.doctorPatients); break;
-          case 3: break;
-        }
-        setState(() => _currentNavIndex = i);
-      },
-      ),
       body: BlocBuilder<DashboardCubit, DashboardState>(
         builder: (context, state) {
           if (state is DashboardLoading || state is DashboardInitial) {
@@ -151,7 +143,8 @@ class _DashboardHeader extends StatelessWidget {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
+                  // حل تحذير الـ Opacity الأول
+                  color: Colors.white.withValues(alpha: 0.2),
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(
@@ -182,7 +175,8 @@ class _DashboardHeader extends StatelessWidget {
                 width: AppDimensions.avatarM,
                 height: AppDimensions.avatarM,
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.3),
+                  // حل تحذير الـ Opacity الثاني
+                  color: Colors.white.withValues(alpha: 0.3),
                   shape: BoxShape.circle,
                   border: Border.all(color: Colors.white, width: 2),
                 ),
@@ -280,7 +274,7 @@ class _NewRequestsSection extends StatelessWidget {
           Text('طلبات جديدة', style: AppTextStyles.h4),
           const SizedBox(height: AppDimensions.paddingS),
           ...requests.map(
-            (req) => Padding(
+                (req) => Padding(
               padding: const EdgeInsets.only(bottom: AppDimensions.paddingS),
               child: AppointmentRequestCard(
                 appointment: req,

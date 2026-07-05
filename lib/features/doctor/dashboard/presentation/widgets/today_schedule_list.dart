@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:clinic_management_system/core/constants/app_colors.dart';
 import 'package:clinic_management_system/core/constants/app_text_styles.dart';
 import 'package:clinic_management_system/core/constants/app_dimensions.dart';
+import '../../../../shared/data/models/appointment_model.dart';
 import '../../../dashboard/presentation/cubits/dashboard_state.dart';
 import 'schedule_appointment_tile.dart';
 

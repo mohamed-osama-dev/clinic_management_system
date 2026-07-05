@@ -1,10 +1,12 @@
+// Path: lib/features/doctor/schedule/presentation/pages/doctor_schedule_screen2.dart
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:clinic_management_system/core/constants/app_colors.dart';
 import 'package:clinic_management_system/core/constants/app_text_styles.dart';
 import 'package:clinic_management_system/core/constants/app_dimensions.dart';
-import 'package:clinic_management_system/core/widgets/app_bottom_nav.dart';
-
+import 'package:clinic_management_system/features/auth/presentation/cubit/auth_cubit.dart';
+import 'package:clinic_management_system/features/auth/presentation/cubit/auth_state.dart';
 import '../cubits/schedule_cubit.dart';
 import '../cubits/schedule_state.dart';
 import '../widgets/weekly_calendar_strip.dart';
@@ -18,22 +20,26 @@ class DoctorScheduleScreen extends StatefulWidget {
 }
 
 class _DoctorScheduleScreenState extends State<DoctorScheduleScreen> {
-  int _currentNavIndex = 1;
+  // تم حذف _currentNavIndex من هنا
 
   @override
   void initState() {
     super.initState();
-    context.read<ScheduleCubit>().loadSchedule();
+    // 1. بنقرأ حالة تسجيل الدخول الحالية
+    final authState = context.read<AuthCubit>().state;
+
+    // 2. لو الدكتور مسجل دخول، بناخد الـ ID بتاعه ونبعته للـ Cubit
+    if (authState is AuthAuthenticated) {
+      final doctorId = authState.user.id;
+      context.read<ScheduleCubit>().loadSchedule(doctorId);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      bottomNavigationBar: DoctorBottomNav(
-        currentIndex: _currentNavIndex,
-        onTap: (i) => setState(() => _currentNavIndex = i),
-      ),
+      // تم حذف الـ bottomNavigationBar من هنا
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           // TODO: navigate to add appointment
@@ -117,14 +123,14 @@ class _ScheduleBody extends StatelessWidget {
           child: state.appointments.isEmpty
               ? _EmptySchedule()
               : ListView.builder(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppDimensions.paddingM,
-                  ),
-                  itemCount: state.appointments.length,
-                  itemBuilder: (context, i) => ScheduleAppointmentCard(
-                    appointment: state.appointments[i],
-                  ),
-                ),
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppDimensions.paddingM,
+            ),
+            itemCount: state.appointments.length,
+            itemBuilder: (context, i) => ScheduleAppointmentCard(
+              appointment: state.appointments[i],
+            ),
+          ),
         ),
       ],
     );

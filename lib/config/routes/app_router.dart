@@ -14,19 +14,25 @@ import 'package:clinic_management_system/features/auth/presentation/screens/regi
 import 'package:clinic_management_system/features/auth/presentation/screens/role_selection_screen.dart';
 import 'package:clinic_management_system/features/auth/presentation/screens/splash_screen.dart';
 import 'package:clinic_management_system/features/doctor/dashboard/presentation/cubits/dashboard_cubit.dart';
-import 'package:clinic_management_system/features/doctor/dashboard/presentation/pages/doctor_dashboard_screen.dart';
+import 'package:clinic_management_system/features/doctor/dashboard/presentation/pages/doctor_dashboard_screen2.dart';
 import 'package:clinic_management_system/features/doctor/schedule/presentation/cubits/schedule_cubit.dart';
-import 'package:clinic_management_system/features/doctor/schedule/presentation/pages/doctor_schedule_screen.dart';
+import 'package:clinic_management_system/features/doctor/schedule/presentation/pages/doctor_schedule_screen2.dart';
 import 'package:clinic_management_system/features/doctor/patients/presentation/cubits/doctor_patients_cubit.dart';
-import 'package:clinic_management_system/features/doctor/patients/presentation/pages/doctor_patients_screen.dart';
+import 'package:clinic_management_system/features/doctor/patients/presentation/pages/doctor_patients_screen2.dart';
 import 'package:clinic_management_system/features/doctor/prescription/presentation/cubits/prescription_cubit.dart';
 import 'package:clinic_management_system/features/doctor/prescription/presentation/screens/prescription_screen.dart';
 import 'package:clinic_management_system/features/doctor/patient_file/presentation/cubits/patient_file_cubit.dart';
 import 'package:clinic_management_system/features/doctor/patient_file/presentation/screens/patient_file_screen.dart';
-import 'package:clinic_management_system/features/patient/home/presentation/screens/patient_home_screen.dart';
+import 'package:clinic_management_system/features/patient/home/presentation/screens/patient_home_screen.dart' hide PatientHomeScreen;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+
+import '../../features/patient/home/presentation/pages/patient_home_screen2.dart';
+import '../../features/patient/main_shell.dart';
+
+// استدعاء ملف الـ Shell الخاص بالدكتور
+import 'package:clinic_management_system/features/doctor/doctor_main_shell.dart';
 
 GoRouter createRouter(AuthCubit authCubit) {
   return GoRouter(
@@ -56,7 +62,7 @@ GoRouter createRouter(AuthCubit authCubit) {
       }
 
       if (authState.user.role == UserRole.patient) {
-        if (location.startsWith('/doctor')) return AppRoutes.patientHome;
+        if (location.startsWith('/doctor')) return AppRoutes.mainShell;
       } else if (authState.user.role == UserRole.doctor) {
         if (location.startsWith('/patient')) return AppRoutes.doctorDashboard;
       }
@@ -145,6 +151,17 @@ GoRouter createRouter(AuthCubit authCubit) {
               FadeTransition(opacity: animation, child: child),
         ),
       ),
+
+      GoRoute(
+        path: AppRoutes.mainShell,
+        pageBuilder: (context, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: const MainShell(),
+          transitionsBuilder: (_, animation, __, child) =>
+              FadeTransition(opacity: animation, child: child),
+        ),
+      ),
+
       GoRoute(
         path: AppRoutes.patientHome,
         pageBuilder: (context, state) => CustomTransitionPage(
@@ -157,13 +174,18 @@ GoRouter createRouter(AuthCubit authCubit) {
 
       // ── Doctor Routes ─────────────────────────────────────────────────────
 
+      // تعديل مسار الدكتور لفتح DoctorMainShell وتوفير كل الـ Cubits
       GoRoute(
         path: AppRoutes.doctorDashboard,
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: BlocProvider(
-            create: (_) => DashboardCubit(),
-            child: const DoctorDashboardScreen(),
+          child: MultiBlocProvider(
+            providers: [
+              BlocProvider(create: (_) => DashboardCubit()),
+              BlocProvider(create: (_) => ScheduleCubit()),
+              BlocProvider(create: (_) => DoctorPatientsCubit()),
+            ],
+            child: const DoctorMainShell(),
           ),
           transitionsBuilder: (_, animation, __, child) =>
               FadeTransition(opacity: animation, child: child),
@@ -235,7 +257,7 @@ GoRouter createRouter(AuthCubit authCubit) {
       GoRoute(path: AppRoutes.medicalRecords, builder: (_, __) => const SizedBox()),
     ],
     errorBuilder: (context, state) =>
-        const Center(child: Text('الصفحة غير موجودة')),
+    const Center(child: Text('الصفحة غير موجودة')),
   );
 }
 

@@ -11,7 +11,7 @@ class AppUser extends Equatable {
     this.isEmailVerified = false,
     this.phone,
     this.avatarUrl,
-    this.specialty,
+    this.specialization, // تم التعديل هنا
     this.licenseNumber,
     this.yearsOfExperience,
     this.isProfileComplete = false,
@@ -25,7 +25,7 @@ class AppUser extends Equatable {
   final bool isEmailVerified;
   final String? phone;
   final String? avatarUrl;
-  final String? specialty;
+  final String? specialization; // تم التعديل هنا
   final String? licenseNumber;
   final int? yearsOfExperience;
   final bool isProfileComplete;
@@ -39,7 +39,7 @@ class AppUser extends Equatable {
     bool? isEmailVerified,
     String? phone,
     String? avatarUrl,
-    String? specialty,
+    String? specialization, // تم التعديل هنا
     String? licenseNumber,
     int? yearsOfExperience,
     bool? isProfileComplete,
@@ -53,7 +53,7 @@ class AppUser extends Equatable {
       isEmailVerified: isEmailVerified ?? this.isEmailVerified,
       phone: phone ?? this.phone,
       avatarUrl: avatarUrl ?? this.avatarUrl,
-      specialty: specialty ?? this.specialty,
+      specialization: specialization ?? this.specialization, // تم التعديل هنا
       licenseNumber: licenseNumber ?? this.licenseNumber,
       yearsOfExperience: yearsOfExperience ?? this.yearsOfExperience,
       isProfileComplete: isProfileComplete ?? this.isProfileComplete,
@@ -70,7 +70,7 @@ class AppUser extends Equatable {
     isEmailVerified,
     phone,
     avatarUrl,
-    specialty,
+    specialization, // تم التعديل هنا
     licenseNumber,
     yearsOfExperience,
     isProfileComplete,
