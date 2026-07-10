@@ -1,4 +1,3 @@
-
 import 'package:clinic_management_system/features/patient/doctor_profile/domain/entities/doctor_entity.dart';
 import 'package:clinic_management_system/features/patient/booking/presentation/screens/booking_confirmation_screen.dart';
 import 'package:flutter/material.dart';
@@ -15,21 +14,23 @@ class DoctorProfileScreen extends StatefulWidget {
 }
 
 class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
-  DateTime _selectedDate = DateTime(2026, 4, 27);
+  // تم التعديل: البداية دائماً من تاريخ اليوم
+  DateTime _selectedDate = DateTime.now();
   bool _isOnline = false;
   String? _selectedTime;
   bool _expanded = false;
 
   final List<String> _times = ['09:00 ص', '09:30 ص', '10:00 ص', '10:30 ص', '11:00 ص', '11:30 ص', '01:00 م', '04:00 م'];
-  final List<String> _unavailable = ['02:30 م'];
 
+  // تم التعديل: توليد التواريخ ديناميكياً بداية من اليوم
   List<DateTime> get _days {
-    final base = DateTime(2026, 4, 25);
-    return List.generate(5, (i) => base.add(Duration(days: i)));
+    final now = DateTime.now();
+    return List.generate(7, (i) => now.add(Duration(days: i)));
   }
 
+  // تم التعديل: تحديث أسماء الأيام والشهور لتناسب التوقيت الحالي
   final Map<int, String> _dayNames = {1: 'الإث', 2: 'الثلا', 3: 'الأر', 4: 'الخم', 5: 'الجم', 6: 'الست', 7: 'الأح'};
-  final Map<int, String> _monthNames = {4: 'أبريل', 5: 'مايو'};
+  final Map<int, String> _monthNames = {7: 'يوليو', 8: 'أغسطس'};
 
   @override
   Widget build(BuildContext context) {
@@ -143,7 +144,7 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
         reverse: true,
         scrollDirection: Axis.horizontal,
         children: _days.map((date) {
-          final selected = date.day == _selectedDate.day;
+          final selected = date.day == _selectedDate.day && date.month == _selectedDate.month;
           return GestureDetector(
             onTap: () => setState(() => _selectedDate = date),
             child: Container(

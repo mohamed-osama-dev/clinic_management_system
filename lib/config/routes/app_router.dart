@@ -23,12 +23,11 @@ import 'package:clinic_management_system/features/doctor/prescription/presentati
 import 'package:clinic_management_system/features/doctor/prescription/presentation/screens/prescription_screen.dart';
 import 'package:clinic_management_system/features/doctor/patient_file/presentation/cubits/patient_file_cubit.dart';
 import 'package:clinic_management_system/features/doctor/patient_file/presentation/screens/patient_file_screen.dart';
-import 'package:clinic_management_system/features/patient/home/presentation/screens/patient_home_screen.dart' hide PatientHomeScreen;
+import 'package:clinic_management_system/features/patient/home/presentation/screens/patient_home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../features/patient/home/presentation/pages/patient_home_screen2.dart';
 import '../../features/patient/main_shell.dart';
 
 // استدعاء ملف الـ Shell الخاص بالدكتور

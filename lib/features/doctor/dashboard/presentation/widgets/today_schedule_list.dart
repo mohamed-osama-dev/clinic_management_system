@@ -39,7 +39,7 @@ class TodayScheduleList extends StatelessWidget {
                 ),
                 child: Text('عرض الكل', style: AppTextStyles.labelMedium.copyWith(color: AppColors.primary)),
               ),
-              Text('جدول اليوم', style: AppTextStyles.h4),
+              Text('طلبات اليوم', style: AppTextStyles.h4),
             ],
           ),
         ),
@@ -50,7 +50,7 @@ class TodayScheduleList extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(AppDimensions.paddingL),
             child: Text(
-              'لا توجد مواعيد اليوم',
+              'لا توجد طلبات اليوم',
               style: AppTextStyles.bodyMedium,
               textAlign: TextAlign.center,
             ),

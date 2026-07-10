@@ -15,7 +15,7 @@ class PatientBottomNav extends StatelessWidget {
     BottomNavigationBarItem(icon: Icon(Icons.home_rounded), label: 'الرئيسية'),
     BottomNavigationBarItem(icon: Icon(Icons.calendar_month_rounded), label: 'مواعيدي'),
     BottomNavigationBarItem(icon: Icon(Icons.chat_bubble_outline_rounded), label: 'المحادثات'),
-    BottomNavigationBarItem(icon: Icon(Icons.person_outline_rounded), label: 'حسابي'),
+    BottomNavigationBarItem(icon: Icon(Icons.person_outline_rounded), label: 'البروفايل'),
   ];
 
   @override
@@ -46,10 +46,10 @@ class DoctorBottomNav extends StatelessWidget {
   final Function(int) onTap;
 
   static const List<BottomNavigationBarItem> _items = [
-    BottomNavigationBarItem(icon: Icon(Icons.grid_view_rounded), label: 'اللوحة'),
+    BottomNavigationBarItem(icon: Icon(Icons.grid_view_rounded), label: 'الرئيسية'),
     BottomNavigationBarItem(icon: Icon(Icons.calendar_month_rounded), label: 'الجدول'),
-    BottomNavigationBarItem(icon: Icon(Icons.people_outline_rounded), label: 'المرضى'),
-    BottomNavigationBarItem(icon: Icon(Icons.settings_outlined), label: 'الإعدادات'),
+    BottomNavigationBarItem(icon: Icon(Icons.chat_bubble_outline_rounded), label: 'المحادثات'),
+    BottomNavigationBarItem(icon: Icon(Icons.person_outline_rounded), label: 'البروفايل'),
   ];
 
   @override

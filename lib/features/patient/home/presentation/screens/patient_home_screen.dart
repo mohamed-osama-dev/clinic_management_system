@@ -38,6 +38,13 @@ class PatientHomeScreen extends StatelessWidget {
           if (state is AuthAuthenticated) {
             patientName = state.user.name;
             firstLetter = patientName.isNotEmpty ? patientName.substring(0, 1) : 'م';
+          } else {
+            // Fallback عشان لو الستيت مش Authenticated يقرأ برضه صح
+            final fallbackUser = context.read<AuthCubit>().currentUser;
+            if (fallbackUser != null) {
+              patientName = fallbackUser.name;
+              firstLetter = patientName.isNotEmpty ? patientName.substring(0, 1) : 'م';
+            }
           }
 
           return Padding(
@@ -48,7 +55,7 @@ class PatientHomeScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      Text('مرحباً 👋', style: AppTextStyles.bodyMedium),
+                      const Text('مرحباً 👋', style: AppTextStyles.bodyMedium),
                       Text(patientName, style: AppTextStyles.h3),
                     ],
                   ),
@@ -115,7 +122,6 @@ class PatientHomeScreen extends StatelessWidget {
               final doctors = docs.map((doc) {
                 final data = doc.data() as Map<String, dynamic>;
 
-                // ── التعديل هنا: إضافة كل المتغيرات المطلوبة للـ DoctorEntity ──
                 return DoctorEntity(
                   id: doc.id,
                   name: 'د. ${data['name'] ?? 'طبيب'}',
@@ -123,13 +129,12 @@ class PatientHomeScreen extends StatelessWidget {
                   location: 'عيادة أمل',
                   price: 200.0,
                   bio: data['bio'] ?? 'طبيب متخصص ومتميز في مجاله.',
-                  // بنحاول نقرأ سنوات الخبرة كـ int أو نديها قيمة افتراضية 5
                   experience: (data['yearsOfExperience'] as num?)?.toInt() ?? 5,
                   imageUrl: data['avatarUrl'] ?? '',
-                  patients: 120, // رقم وهمي مؤقت لعدد المرضى
-                  rating: 4.8, // تقييم وهمي مؤقت
-                  reviewCount: 45, // عدد مراجعات وهمي
-                  sessionMinutes: 30, // مدة الجلسة بالدقائق
+                  patients: 120,
+                  rating: 4.8,
+                  reviewCount: 45,
+                  sessionMinutes: 30,
                 );
               }).toList();
 

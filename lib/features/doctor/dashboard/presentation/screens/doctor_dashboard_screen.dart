@@ -26,8 +26,10 @@ class _DoctorDashboardScreenState extends State<DoctorDashboardScreen> {
   @override
   void initState() {
     super.initState();
-    // ── التعديل هنا: قراءة الـ AuthState وإرسال البيانات ──
-    final authState = context.read<AuthCubit>().state;
+    // 1. اتأكد إننا بنقرأ الـ Cubit صح
+    final authCubit = context.read<AuthCubit>();
+    final authState = authCubit.state;
+
     if (authState is AuthAuthenticated) {
       context.read<DashboardCubit>().loadDashboard(
         authState.user.id,

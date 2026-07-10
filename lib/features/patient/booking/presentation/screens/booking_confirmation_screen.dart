@@ -58,29 +58,38 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
 
       final patient = authState.user;
 
-      // دمج التاريخ والوقت المختارين
-      final hour = int.parse(widget.time.split(':')[0]);
-      final minute = int.parse(widget.time.split(':')[1].split(' ')[0]);
-      final isPM = widget.time.contains('م');
-      final finalHour = isPM && hour != 12 ? hour + 12 : (!isPM && hour == 12 ? 0 : hour);
-      final appointmentDateTime = DateTime(widget.date.year, widget.date.month, widget.date.day, finalHour, minute);
+      // ── تعديل جذري للوقت عشان نضمن الدقة ──
+      final timeParts = widget.time.split(':');
+      int hour = int.parse(timeParts[0]);
+      int minute = int.parse(timeParts[1].split(' ')[0]);
+      bool isPM = widget.time.contains('م');
 
-      // ── التعديل هنا: توليد ID حقيقي من فايربيز قبل الحفظ ──
+      // منطق بسيط ومضمون للـ 24 ساعة
+      if (isPM && hour != 12) hour += 12;
+      if (!isPM && hour == 12) hour = 0;
+
+      // دمج تاريخ اليوم المختار مع الساعة والدقيقة اللي حسبناها
+      final appointmentDateTime = DateTime(
+        widget.date.year,
+        widget.date.month,
+        widget.date.day,
+        hour,
+        minute,
+      );
+
       final generatedId = FirebaseFirestore.instance.collection('appointments').doc().id;
 
-      // تجهيز الحجز
       final newAppointment = AppointmentModel(
-        id: generatedId, // استخدمنا الـ ID اللي اتولد
+        id: generatedId,
         patientId: patient.id,
         doctorId: widget.doctor.id,
-        dateTime: appointmentDateTime,
+        dateTime: appointmentDateTime, // التاريخ اللي هيتخزن في فايربيز
         status: AppointmentStatus.pending,
         patientName: patient.name,
         type: widget.isOnline ? 'استشارة عن بعد' : 'كشف حضوري',
         durationMinutes: 30,
       );
 
-      // رفع الداتا لفايربيز
       await _repository.createAppointment(newAppointment);
 
       if (mounted) {

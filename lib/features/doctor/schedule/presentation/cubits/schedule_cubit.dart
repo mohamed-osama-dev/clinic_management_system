@@ -1,28 +1,29 @@
 import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
-// TODO: اعمل import لملف appointments_repository.dart و appointment_model.dart بالمسار بتاعك
 import '../../../../shared/data/repositories/appointments_repository.dart';
+import '../../../../shared/data/models/appointment_model.dart'; // اتأكد إن ده مسار الموديل عندك
 import 'schedule_state.dart';
 
 class ScheduleCubit extends Cubit<ScheduleState> {
-  // أخدنا نسخة من الـ Repo عشان نكلم فايربيز
   final AppointmentsRepository _repository = AppointmentsRepository();
   StreamSubscription? _subscription;
 
-  ScheduleCubit() : super(ScheduleInitial());
+  // 1. تعريف المتغير على مستوى الكلاس عشان كل الدوال تشوفه
+  List<AppointmentModel> _allAppointments = [];
 
-  // ضفنا المتغير هنا
+  ScheduleCubit() : super(const ScheduleInitial());
+
   void loadSchedule(String doctorId) {
     emit(const ScheduleLoading());
     try {
       _subscription?.cancel();
-      // باصينا المتغير الحقيقي للـ Repository
       _subscription = _repository.getDoctorAppointments(doctorId).listen(
               (appointments) {
-            emit(ScheduleLoaded(
-              appointments: appointments,
-              selectedDate: DateTime.now(),
-            ));
+            // 2. حفظ الداتا في المتغير عند كل تحديث من الفايربيز
+            _allAppointments = appointments;
+
+            // 3. عرض مواعيد "اليوم" كحالة أولية
+            selectDate(DateTime.now());
           },
           onError: (error) {
             emit(ScheduleError('حصلت مشكلة في جلب المواعيد: $error'));
@@ -33,20 +34,23 @@ class ScheduleCubit extends Cubit<ScheduleState> {
     }
   }
 
-  // دالة عشان لما الدكتور يختار يوم تاني من الكاليندر
   void selectDate(DateTime date) {
-    if (state is ScheduleLoaded) {
-      final currentState = state as ScheduleLoaded;
-      emit(ScheduleLoaded(
-        appointments: currentState.appointments,
-        selectedDate: date,
-      ));
-    }
+    // 4. دلوقت الـ _allAppointments معرف وشغال زي الفل
+    final filteredAppointments = _allAppointments.where((app) =>
+    app.dateTime.year == date.year &&
+        app.dateTime.month == date.month &&
+        app.dateTime.day == date.day
+    ).toList();
+
+    emit(ScheduleLoaded(
+      selectedDate: date,
+      appointments: filteredAppointments,
+    ));
   }
 
   @override
   Future<void> close() {
-    _subscription?.cancel(); // لازم نقفل الـ Stream عشان الـ Memory leak
+    _subscription?.cancel();
     return super.close();
   }
 }

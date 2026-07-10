@@ -39,14 +39,6 @@ class _DoctorScheduleScreenState extends State<DoctorScheduleScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      // تم حذف الـ bottomNavigationBar من هنا
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // TODO: navigate to add appointment
-        },
-        backgroundColor: AppColors.primary,
-        child: const Icon(Icons.add_rounded, color: Colors.white),
-      ),
       body: BlocBuilder<ScheduleCubit, ScheduleState>(
         builder: (context, state) {
           if (state is ScheduleLoading || state is ScheduleInitial) {
